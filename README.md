@@ -12,10 +12,11 @@ Example backend node server to read from the OvalCMS API and respond to a given 
   - ACCESS_TOKEN cached to reduce resource calls
   - Responses provided in JSON format
 
-## Install
+## Download The Example
 
 ```
-$ npm install @ovalcms/backend-node
+# clone the repo
+$ git clone https://github.com/ovalcms/backend-node.git
 ```
 
 ## Environment Variables
