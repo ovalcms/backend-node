@@ -1,0 +1,45 @@
+{
+  "name": "@ovalcms/backend-node",
+  "version": "0.0.1",
+  "description": "Example backend node server to read from the OvalCMS API and respond to a given frontend client.",
+  "main": "app.js",
+  "license": "MIT",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ovalcms/backend-node.git"
+  },
+  "keywords": [
+    "api",
+    "backend",
+    "cms",
+    "example",
+    "node",
+    "oval",
+    "ovalcms",
+    "server"
+  ],
+  "scripts": {
+    "coverage": "nyc --reporter html --reporter text npm test",
+    "eslint": "eslint app.js models routes test utils --config .eslintrc.json",
+    "start": "node ./bin/www",
+    "startmon": "nodemon ./bin/www",
+    "test": "mocha --timeout 10000 --exit"
+  },
+  "dependencies": {
+    "debug": "~4.1.1",
+    "dotenv": "^8.1.0",
+    "eslint": "^6.5.1",
+    "express": "~4.17.1",
+    "morgan": "~1.9.1",
+    "node-cache": "^4.2.1",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^6.2.1",
+    "nodemon": "^1.19.3",
+    "nyc": "^14.1.1"
+  }
+}

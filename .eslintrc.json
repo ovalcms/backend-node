@@ -1,0 +1,87 @@
+{
+    "extends": "eslint:recommended",
+    "env": {
+      "browser": true,
+      "commonjs": true,
+      "es6": true,
+      "jasmine": true,
+      "node": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 2017,
+      "sourceType": "module"
+    },
+    "rules": {
+      "arrow-body-style": [
+        "warn",
+        "as-needed"
+      ],
+      "arrow-parens": [
+        "warn",
+        "always"
+      ],
+      "arrow-spacing": [
+        "warn",
+        {
+          "before": true,
+          "after": true
+        }
+      ],
+      "comma-dangle": "error",
+      "comma-spacing": [
+        "error",
+        {
+          "before": false,
+          "after": true
+        }
+      ],
+      "constructor-super": "warn",
+      "eol-last": [
+        "error",
+        "always"
+      ],
+      "indent": [
+        "error",
+        2,
+        {
+          "MemberExpression": 1
+        }
+      ],
+      "max-len": [
+        "error",
+        100
+      ],
+      "no-multiple-empty-lines": [
+        "error"
+      ],
+      "no-console": 0,
+      "no-const-assign": "warn",
+      "no-new-symbol": "error",
+      "no-this-before-super": "warn",
+      "no-trailing-spaces": [
+        "error"
+      ],
+      "no-undef": "warn",
+      "no-unreachable": "warn",
+      "no-unused-vars": "warn",
+      "no-var": "warn",
+      "object-curly-spacing": [
+        "error",
+        "always"
+      ],
+      "object-shorthand": "error",
+      "prefer-arrow-callback": [
+        "warn",
+        {
+          "allowNamedFunctions": true
+        }
+      ],
+      "prefer-const": "warn",
+      "quotes": [
+        "error",
+        "single"
+      ],
+      "valid-typeof": "warn"
+    }
+  }
+  
