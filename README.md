@@ -37,7 +37,7 @@ OVAL_CLIENT_SECRET= [ from your OvalCMS.com account ]
 Install the dependencies and devDependencies and start the server.
 
 ```sh
-$ cd node-client-backend
+$ cd backend-node
 $ npm install
 $ npm run start
 ```
