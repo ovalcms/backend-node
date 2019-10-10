@@ -1,6 +1,6 @@
 {
   "name": "@ovalcms/backend-node",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Example backend node server to read from the OvalCMS API and respond to a given frontend client.",
   "main": "app.js",
   "license": "MIT",
