@@ -21,7 +21,15 @@ $ git clone https://github.com/ovalcms/backend-node.git
 
 ## Environment Variables
 
-Create a file name ".env" in the root directory
+Create a file name ".env" in the project root directory
+
+```sh
+$ cd backend-node
+# for *nix command line
+$ touch .env
+# for windows command line
+start notepad .env <press Enter>
+```
 
 ```
 NODE_ENV=production
