@@ -4,6 +4,8 @@
 
 Example backend node server to read from the OvalCMS API and respond to a given frontend client. 
 
+[![N|OvalCMS](https://www.ovalcms.com/assets/img/examples/ovalCmsDgrmCstmrBackEnd1451orig.png)](https://www.ovalcms.com)
+
 # Features!
 
   - Uses OAuth2 for secure retrieval of content from the OvalCMS API
@@ -21,15 +23,7 @@ $ git clone https://github.com/ovalcms/backend-node.git
 
 ## Environment Variables
 
-Create a file name ".env" in the project root directory
-
-```sh
-$ cd backend-node
-# for *nix command line
-$ touch .env
-# for windows command line
-start notepad .env <press Enter>
-```
+Create a file name ".env" in the root directory
 
 ```
 NODE_ENV=production
@@ -62,4 +56,4 @@ $ npm run coverage
 
 License
 ----
-MIT
+[MIT License](LICENSE) Copyright (c) 2019 [OvalCMS](https://www.ovalcms.com/).
