@@ -1,20 +1,14 @@
 'use strict'
 const request = require('request');
 
-const NodeCache = require('node-cache');
-const myCache = new NodeCache();
 const cacheKey = 'accTokenObj';
+const redis = require('redis');
+const redisClient = redis.createClient();
+const { promisify } = require('util');
+const getAsync = promisify(redisClient.get).bind(redisClient);
+redisClient.on('connect', () => console.log('Redis connected'));
 
-// const utilsToken = require('../token');
 const utilsToken = require('../utils/token');
-
-// Base URL
-const protocol = process.env.API_PROTOCOL;
-const host = process.env.API_HOST;
-const port = process.env.API_PORT;
-
-let path = '';
-let apiUrl = '';
 
 /**
  * Promise that checks if access token has expired
@@ -23,13 +17,11 @@ let apiUrl = '';
  */
 function getContent(oauthTokenObject) {
   return new Promise(((resolve, reject) => {
-    path = 'api/content/' + oauthTokenObject.entryId;
-
-    if (process.env.NODE_ENV === 'development') {
-      apiUrl = `${protocol}://${host}:${port}/${path}`;
-    } else {
-      apiUrl = `${protocol}://${host}/${path}`;
-    }
+    // Base URL
+    const protocol = process.env.API_PROTOCOL;
+    const host = process.env.API_HOST;
+    const path = 'api/content/' + oauthTokenObject.entryId;
+    const apiUrl = `${protocol}://${host}/${path}`;
 
     const options = {
       url: apiUrl,
@@ -53,64 +45,44 @@ function getContent(oauthTokenObject) {
 }
 
 function buildRespObject(resp) {
-  if (process.env.NODE_ENV === 'production') {
-
-    const respObj = {
-      modified: '',
-      authorId: '',
-      entry: '',
-      pageId: '',
-      publishDate: '',
-      status: '',
-      title: ''
-    }
-
-    respObj.modified = resp.result.modified;
-    respObj.authorId = resp.result.authorId;
-    respObj.entry = resp.result.entry;
-    respObj.pageId = resp.result.pageId;
-    respObj.publishDate = resp.result.publishDate;
-    respObj.status = resp.result.status;
-    respObj.title = resp.result.title;
-
-
-    return respObj;
-  } else {
-    const respObj = {
-      modified: '',
-      authorId: '',
-      entry: '',
-      pageId: '',
-      publishDate: '',
-      status: '',
-      title: '',
-      accessToken: ''
-    }
-
-    respObj.modified = resp.result.modified;
-    respObj.authorId = resp.result.authorId;
-    respObj.entry = resp.result.entry;
-    respObj.pageId = resp.result.pageId;
-    respObj.publishDate = resp.result.publishDate;
-    respObj.status = resp.result.status;
-    respObj.title = resp.result.title;
-    respObj.accessToken = resp.result.accessToken;
-
-    return respObj;
+  const respObj = {
+    modified: '',
+    authorId: '',
+    entry: '',
+    pageId: '',
+    publishDate: '',
+    status: '',
+    title: ''
   }
+
+  respObj.modified = resp.result.modified;
+  respObj.authorId = resp.result.authorId;
+  respObj.entry = resp.result.entry;
+  respObj.pageId = resp.result.pageId;
+  respObj.publishDate = resp.result.publishDate;
+  respObj.status = resp.result.status;
+  respObj.title = resp.result.title;
+
+  return respObj;
 }
 
 async function getApiContent(reqEntryId) {
   try {
+
+    // if for some reason token is deleted before cache clears
+    // redisClient.flushdb((err, succeeded) => {
+    //   console.log(succeeded); // will be true if successfull
+    // });
+
     // try to get cached object
-    const cachedData = myCache.get(cacheKey);
+    const cachedData = await getRedisCacheValue();
 
     // != null also checks for undefined
     if (cachedData != null) {
       // serve the object from cache
-      const isUnexpired = await utilsToken.isTokenUnexpired(cachedData);
+      const isUnexpired = await utilsToken.isTokenUnexpired(JSON.parse(cachedData));
       if (isUnexpired) {
-        return await getContent(cachedData);
+        return await getContent(JSON.parse(cachedData));
       } else {
         const tokenResponse = await utilsToken.postApiTokenRequest;
 
@@ -142,7 +114,7 @@ async function getApiContent(reqEntryId) {
       const timeToLive = 3600;
 
       // cache the data
-      myCache.set(cacheKey, oauthTokenObject, timeToLive);
+      await setRedisCacheValue(cacheKey, oauthTokenObject, timeToLive);
 
       return await getContent(oauthTokenObject);
     }
@@ -151,6 +123,14 @@ async function getApiContent(reqEntryId) {
       error: 'error'
     };
   }
+}
+
+async function getRedisCacheValue() {
+  return await getAsync(cacheKey);
+}
+
+async function setRedisCacheValue(key, tokenObject, ttl) {
+  redisClient.setex(key, ttl, JSON.stringify(tokenObject));
 }
 
 module.exports = {

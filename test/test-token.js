@@ -109,35 +109,3 @@ describe('Check For Expired Token', function () {
     });
   });
 });
-
-describe('/POST and DELETE token', function () {
-  it('it should create and then delete a token', function (done) {
-    let accessToken = '';
-
-    chai.request(server)
-      .post('/token')
-      .send()
-      .end(function (err, res) {
-        res.should.have.status(200);
-        res.body.accessToken.should.be.a('string');
-        res.body.accessTokenExpiresAt.should.be.a('string');
-        res.body.client.should.be.a('object');
-        res.body.client.should.be.a('object');
-        res.body.client.should.have.property('id').eql(process.env.OVAL_CLIENT_ID);
-        accessToken = res.body.accessToken;
-
-        chai.request(server)
-          .delete('/token/' + accessToken)
-          .send()
-          .end(function (error, response) {
-            response.should.have.status(200);
-            response.should.be.json;
-            response.body.should.be.a('object');
-            response.body.should.have.property('removed');
-            response.body.removed.should.be.a('string');
-            response.body.removed.should.equal(accessToken);
-            done();
-          });
-      });
-  });
-});

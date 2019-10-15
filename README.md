@@ -4,11 +4,12 @@
 
 Example backend node server to read from the OvalCMS API and respond to a given frontend client. 
 
-[![N|OvalCMS](https://www.ovalcms.com/assets/img/examples/ovalCmsDgrmCstmrBackEnd1451orig.png)](https://www.ovalcms.com)
+[![N|OvalCMS](https://www.ovalcms.com/assets/img/examples/ovalCmsDgrmCstmrBackEnd729.png)](https://www.ovalcms.com)
 
 # Features!
 
   - Uses OAuth2 for secure retrieval of content from the OvalCMS API
+  - Uses Redis for caching of token object (works on system reboot/restart also)
   - Hides CLIENT_ID, CLIENT_SECRET, and ACCESS_TOKEN from frontend client
   - Sample tests included for retrieval of ACCESS_TOKEN and content
   - ACCESS_TOKEN cached to reduce resource calls
@@ -27,12 +28,22 @@ Create a file name ".env" in the root directory
 
 ```
 NODE_ENV=production
-LOCAL_PORT=80
+LOCAL_PORT=5000
 API_PROTOCOL=https
 API_HOST=api.ovalcms.com
-API_PORT=80
 OVAL_CLIENT_ID= [ from your OvalCMS.com account ]
 OVAL_CLIENT_SECRET= [ from your OvalCMS.com account ]
+```
+
+## Install Redis Server
+This example uses Redis for token caching. If you use a diifferent method feel frre to use that. However, it is important to use a caching method that will keep cache or token after a server reboot/restart.
+
+osx / *nix
+```sh
+$ brew update
+$ brew upgrade
+$ brew install redis
+$ redis-server /usr/local/etc/redis.conf
 ```
 
 ## Usage
