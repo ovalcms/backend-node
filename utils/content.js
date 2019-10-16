@@ -20,7 +20,7 @@ function getContent(oauthTokenObject) {
     // Base URL
     const protocol = process.env.API_PROTOCOL;
     const host = process.env.API_HOST;
-    const path = 'api/content/' + oauthTokenObject.entryId;
+    const path = 'api/v1/content/' + oauthTokenObject.entryId;
     const apiUrl = `${protocol}://${host}/${path}`;
 
     const options = {

@@ -46,12 +46,7 @@ function postApiTokenRequestProm() {
     const client_id_secret = client_id + ':' + client_secret;
 
     const path = 'oauth/token';
-
-    // if (process.env.NODE_ENV === 'development') {
-    //   apiUrl = `${protocol}://${host}:${port}/${path}`;
-    // } else {
     const apiUrl = `${protocol}://${host}/${path}`;
-    // }
 
     const options = {
       method: 'POST',
