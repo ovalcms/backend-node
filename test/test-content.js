@@ -21,7 +21,7 @@ describe('/GET content'
   , function () {
     it('it should GET content via POST token, then DELETE token', function (done) {
       // The entryId from OvalCMS.com dashboard
-      const entryId = '7593e5f74c6z37260d4da5y3';
+      const entryId = '5d915913d1183d083c33e868';
 
       chai.request(server)
         // content route checks for token

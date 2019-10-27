@@ -11,16 +11,17 @@ redisClient.on('connect', () => console.log('Redis connected'));
 const utilsToken = require('../utils/token');
 
 /**
- * Promise that checks if access token has expired
+ * Promise that get the chosen content
+ * @param  {String} entryId  id of chosen entry content
  * @param  {Object} oauthTokenObject  OAUTH2 token object with accessTokenExpiresAt set
  * @return {Boolean} true if token Unexpired else false
  */
-function getContent(oauthTokenObject) {
+function getContent(entryId, oauthTokenObject) {
   return new Promise(((resolve, reject) => {
     // Base URL
     const protocol = process.env.API_PROTOCOL;
     const host = process.env.API_HOST;
-    const path = 'api/v1/content/' + oauthTokenObject.entryId;
+    const path = 'api/v1/content/' + entryId;
     const apiUrl = `${protocol}://${host}/${path}`;
 
     const options = {
@@ -38,32 +39,10 @@ function getContent(oauthTokenObject) {
         reject(err);
       } else {
         const respObj = JSON.parse(body);
-        resolve(buildRespObject(respObj));
+        resolve(respObj);
       }
     });
   }));
-}
-
-function buildRespObject(resp) {
-  const respObj = {
-    modified: '',
-    authorId: '',
-    entry: '',
-    pageId: '',
-    publishDate: '',
-    status: '',
-    title: ''
-  }
-
-  respObj.modified = resp.result.modified;
-  respObj.authorId = resp.result.authorId;
-  respObj.entry = resp.result.entry;
-  respObj.pageId = resp.result.pageId;
-  respObj.publishDate = resp.result.publishDate;
-  respObj.status = resp.result.status;
-  respObj.title = resp.result.title;
-
-  return respObj;
 }
 
 async function getApiContent(reqEntryId) {
@@ -82,7 +61,7 @@ async function getApiContent(reqEntryId) {
       // serve the object from cache
       const isUnexpired = await utilsToken.isTokenUnexpired(JSON.parse(cachedData));
       if (isUnexpired) {
-        return await getContent(JSON.parse(cachedData));
+        return await getContent(reqEntryId, JSON.parse(cachedData));
       } else {
         const tokenResponse = await utilsToken.postApiTokenRequest;
 
@@ -91,11 +70,12 @@ async function getApiContent(reqEntryId) {
           accessToken: tokenResponse.accessToken,
           accessTokenExpiresAt: tokenResponse.accessTokenExpiresAt,
           clientId: tokenResponse.client.id,
-          userId: tokenResponse.client.id,
-          entryId: reqEntryId
+          userId: tokenResponse.client.id
+          // ,
+          // entryId: reqEntryId
         }
 
-        return await getContent(oauthTokenObject);
+        return await getContent(reqEntryId, oauthTokenObject);
       }
     } else {
       // get the data and cache it afterwards
@@ -106,8 +86,9 @@ async function getApiContent(reqEntryId) {
         accessToken: tokenResponse.accessToken,
         accessTokenExpiresAt: tokenResponse.accessTokenExpiresAt,
         clientId: tokenResponse.client.id,
-        userId: tokenResponse.client.id,
-        entryId: reqEntryId
+        userId: tokenResponse.client.id
+        // ,
+        // entryId: reqEntryId
       }
 
       // 1 hour = 3600 seconds
@@ -116,7 +97,7 @@ async function getApiContent(reqEntryId) {
       // cache the data
       await setRedisCacheValue(cacheKey, oauthTokenObject, timeToLive);
 
-      return await getContent(oauthTokenObject);
+      return await getContent(reqEntryId, oauthTokenObject);
     }
   } catch (err) {
     return {
