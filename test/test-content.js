@@ -20,22 +20,23 @@ chai.use(chaiHttp);
 describe('/GET content'
   , function () {
     it('it should GET content via POST token, then DELETE token', function (done) {
-      // The entryId from OvalCMS.com dashboard
-      const entryId = '5d915913d1183d083c33e868';
+      // The pageId from OvalCMS.com dashboard
+      const pageId = '7db4855b4da24b0c7f739c17';
 
       chai.request(server)
         // content route checks for token
-        .get('/content/' + entryId)
+        .get('/content/' + pageId)
         .send()
         .end(function (err, res) {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.authorId.should.be.a('string');
-          res.body.entry.should.be.a('string');
-          res.body.pageId.should.be.a('string');
-          res.body.publishDate.should.be.a('string');
-          res.body.status.should.be.a('string');
-          res.body.title.should.be.a('string');
+          res.body.result.titleBlock.should.be.a('object');
+          res.body.result.titleBlock.authorId.should.be.a('string');
+          res.body.result.titleBlock.editor.should.be.a('string');
+          res.body.result.titleBlock.pageId.should.be.a('string');
+          res.body.result.titleBlock.publishDate.should.be.a('string');
+          res.body.result.titleBlock.status.should.be.a('string');
+          res.body.result.titleBlock.title.should.be.a('string');
 
           done();
         });

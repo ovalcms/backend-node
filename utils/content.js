@@ -12,16 +12,16 @@ const utilsToken = require('../utils/token');
 
 /**
  * Promise that get the chosen content
- * @param  {String} entryId  id of chosen entry content
+ * @param  {String} pageId  id of chosen page of content
  * @param  {Object} oauthTokenObject  OAUTH2 token object with accessTokenExpiresAt set
  * @return {Boolean} true if token Unexpired else false
  */
-function getContent(entryId, oauthTokenObject) {
+function getContent(pageId, oauthTokenObject) {
   return new Promise(((resolve, reject) => {
     // Base URL
     const protocol = process.env.API_PROTOCOL;
     const host = process.env.API_HOST;
-    const path = 'api/v1/content/' + entryId;
+    const path = 'api/v1/content/' + pageId;
     const apiUrl = `${protocol}://${host}/${path}`;
 
     const options = {
@@ -45,7 +45,7 @@ function getContent(entryId, oauthTokenObject) {
   }));
 }
 
-async function getApiContent(reqEntryId) {
+async function getApiContent(reqPageId) {
   try {
 
     // if for some reason token is deleted before cache clears
@@ -61,7 +61,7 @@ async function getApiContent(reqEntryId) {
       // serve the object from cache
       const isUnexpired = await utilsToken.isTokenUnexpired(JSON.parse(cachedData));
       if (isUnexpired) {
-        return await getContent(reqEntryId, JSON.parse(cachedData));
+        return await getContent(reqPageId, JSON.parse(cachedData));
       } else {
         const tokenResponse = await utilsToken.postApiTokenRequest;
 
@@ -71,11 +71,9 @@ async function getApiContent(reqEntryId) {
           accessTokenExpiresAt: tokenResponse.accessTokenExpiresAt,
           clientId: tokenResponse.client.id,
           userId: tokenResponse.client.id
-          // ,
-          // entryId: reqEntryId
         }
 
-        return await getContent(reqEntryId, oauthTokenObject);
+        return await getContent(reqPageId, oauthTokenObject);
       }
     } else {
       // get the data and cache it afterwards
@@ -87,8 +85,6 @@ async function getApiContent(reqEntryId) {
         accessTokenExpiresAt: tokenResponse.accessTokenExpiresAt,
         clientId: tokenResponse.client.id,
         userId: tokenResponse.client.id
-        // ,
-        // entryId: reqEntryId
       }
 
       // 1 hour = 3600 seconds
@@ -97,7 +93,7 @@ async function getApiContent(reqEntryId) {
       // cache the data
       await setRedisCacheValue(cacheKey, oauthTokenObject, timeToLive);
 
-      return await getContent(reqEntryId, oauthTokenObject);
+      return await getContent(reqPageId, oauthTokenObject);
     }
   } catch (err) {
     return {

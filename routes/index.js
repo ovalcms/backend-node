@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
 });
 
 // content
-router.get('/content/:entryId', ctrlContent.contentGet);
+router.get('/content/:pageId', ctrlContent.contentGet);
 
 // token
 router.post('/token', ctrlToken.tokenPost);
